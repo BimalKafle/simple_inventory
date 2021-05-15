@@ -5,6 +5,8 @@
  */
 package inventory;
 
+import java.awt.Color;
+
 /**
  *
  * @author Bimal Kafle
@@ -51,6 +53,7 @@ int x,y;
         jLabel13 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -369,15 +372,17 @@ int x,y;
     
  //Customer
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
-        // TODO add your handling code here:
+       Sales c_customer=new Sales();
+       c_customer.setVisible(true);
+     
     }//GEN-LAST:event_jPanel4MouseClicked
 
     private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
-        // TODO add your handling code here:
+      jPanel4.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel4MouseEntered
 
     private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
-        // TODO add your handling code here:
+       jPanel4.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel4MouseExited
 
     
@@ -387,15 +392,16 @@ int x,y;
     
     //Purchase
     private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
-        // TODO add your handling code here:
+        Purchase p_purchase=new Purchase();
+        p_purchase.setVisible(true);
     }//GEN-LAST:event_jPanel6MouseClicked
 
     private void jPanel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseEntered
-        // TODO add your handling code here:
+        jPanel6.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel6MouseEntered
 
     private void jPanel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseExited
-        // TODO add your handling code here:
+        jPanel6.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel6MouseExited
 
     
@@ -404,15 +410,16 @@ int x,y;
     
     //Product
     private void jPanel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel8MouseClicked
-        // TODO add your handling code here:
+      Product p_product=new Product();
+      p_product.setVisible(true);
     }//GEN-LAST:event_jPanel8MouseClicked
 
     private void jPanel8MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel8MouseEntered
-        // TODO add your handling code here:
+        jPanel8.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel8MouseEntered
 
     private void jPanel8MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel8MouseExited
-        // TODO add your handling code here:
+        jPanel8.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel8MouseExited
 
     
@@ -422,15 +429,16 @@ int x,y;
     
     //Supplier
     private void jPanel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MouseClicked
-        // TODO add your handling code here:
+       Supplier s_supplier=new Supplier();
+       s_supplier.setVisible(true);
     }//GEN-LAST:event_jPanel5MouseClicked
 
     private void jPanel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MouseEntered
-        // TODO add your handling code here:
+       jPanel5.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel5MouseEntered
 
     private void jPanel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MouseExited
-        // TODO add your handling code here:
+       jPanel5.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel5MouseExited
 
     
@@ -440,15 +448,16 @@ int x,y;
     
     //Sale
     private void jPanel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel7MouseClicked
-        // TODO add your handling code here:
+       Sales s_sale=new Sales();
+       s_sale.setVisible(true);
     }//GEN-LAST:event_jPanel7MouseClicked
 
     private void jPanel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel7MouseEntered
-        // TODO add your handling code here:
+       jPanel7.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel7MouseEntered
 
     private void jPanel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel7MouseExited
-        // TODO add your handling code here:
+       jPanel7.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel7MouseExited
 
     
@@ -458,15 +467,16 @@ int x,y;
     
     //Category
     private void jPanel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel9MouseClicked
-        // TODO add your handling code here:
+      ProductCategory p_category=new ProductCategory();
+      p_category.setVisible(true);
     }//GEN-LAST:event_jPanel9MouseClicked
 
     private void jPanel9MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel9MouseEntered
-        // TODO add your handling code here:
+       jPanel9.setBackground(new Color(180,212,244));
     }//GEN-LAST:event_jPanel9MouseEntered
 
     private void jPanel9MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel9MouseExited
-        // TODO add your handling code here:
+       jPanel9.setBackground(new Color(240, 240, 240));
     }//GEN-LAST:event_jPanel9MouseExited
 
     
@@ -482,7 +492,9 @@ int x,y;
     
     
     private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
-      
+       int xx=evt.getXOnScreen();
+       int yy=evt.getYOnScreen();
+       this.setLocation(xx-x,yy-y);
     }//GEN-LAST:event_jPanel2MouseDragged
 
     
