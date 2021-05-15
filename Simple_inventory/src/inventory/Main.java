@@ -372,7 +372,7 @@ int x,y;
     
  //Customer
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
-       Sales c_customer=new Sales();
+      Customer c_customer=new Customer();
        c_customer.setVisible(true);
      
     }//GEN-LAST:event_jPanel4MouseClicked
