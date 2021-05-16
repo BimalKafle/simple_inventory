@@ -361,7 +361,7 @@ public class Product extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    //For adding the customer
+    //For adding the product
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(getData()){
         
@@ -420,6 +420,8 @@ public class Product extends javax.swing.JFrame {
        clear();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    
+    //Updating the product
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if(getData()){
        int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to Update?", "Alert!!",
@@ -446,6 +448,8 @@ public class Product extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    
+    //Deleting the product
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
        int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to delete?", "Alert!!",
                JOptionPane.YES_NO_OPTION,
@@ -467,6 +471,8 @@ public class Product extends javax.swing.JFrame {
                 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    
+    //for getting the item from table
     private void itmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itmTableMouseClicked
        String item;
             DefaultTableModel tModel=(DefaultTableModel) itmTable.getModel();

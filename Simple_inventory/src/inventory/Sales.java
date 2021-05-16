@@ -5,19 +5,298 @@
  */
 package inventory;
 
+import com.mysql.jdbc.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Bimal Kafle
  */
 public class Sales extends javax.swing.JFrame {
-int x,y;
+ int x,y;
+ PreparedStatement pst=null;
+ ResultSet rs=null;
+ Connection con;
+ String id,productId,customerId,invoice,products,customers;
+ int quantity;
+ double unit,total;
+ long millis=System.currentTimeMillis();  
+ java.sql.Date date=new java.sql.Date(millis);
     /**
      * Creates new form Customer
      */
     public Sales() {
         initComponents();
+        autoId();
+        loadTable();
+        productComboBox();
+        customerComboBox();
+        invoiceId();
+        
     }
 
+    
+    
+      //loading the data in a table
+    public void loadTable(){
+        try{
+            con=database_connect.connect();
+            String sq="SELECT * FROM `sale`";
+            pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+            rs=pst.executeQuery();
+            itmTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
+                  rs.close();
+                  pst.close();
+                  con.close();
+        }catch(Exception ex){
+
+        }
+    }
+    
+    
+     //Id generator function
+        public void autoId(){
+        try{
+          con=database_connect.connect();
+          String sql="Select id from sale Order By id DESC LIMIT 1";
+          pst=(com.mysql.jdbc.PreparedStatement)con.prepareStatement(sql);
+          rs=pst.executeQuery();
+          if(rs.next()){
+              String rnno=rs.getString("id");
+              int co=rnno.length();
+              String txt=rnno.substring(0,3);
+              String num=rnno.substring(3,co);
+              int n=Integer.parseInt(num);
+              n++;
+              String snum=Integer.toString(n);
+              String ftxt=txt+snum;
+              c_id.setText(ftxt);
+              rs.close();
+              pst.close();
+              con.close();
+          }else{
+              c_id.setText("SAL1000");
+          }
+            
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex);
+        }
+    }
+        
+        
+        //Id generator function
+        public void invoiceId(){
+        try{
+          con=database_connect.connect();
+          String sql="Select InvoiceNumber from sale Order By id DESC LIMIT 1";
+          pst=(com.mysql.jdbc.PreparedStatement)con.prepareStatement(sql);
+          rs=pst.executeQuery();
+          if(rs.next()){
+              String rnno=rs.getString("InvoiceNumber");
+              int co=rnno.length();
+              String txt=rnno.substring(0,3);
+              String num=rnno.substring(3,co);
+              int n=Integer.parseInt(num);
+              n++;
+              String snum=Integer.toString(n);
+              String ftxt=txt+snum;
+              c_invoice.setText(ftxt);
+              rs.close();
+              pst.close();
+              con.close();
+          }else{
+              c_invoice.setText("INV1000");
+          }
+            
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex);
+        }
+    }
+    
+     //Populate the combobox with data
+        public void productComboBox(){
+        try{
+        con=database_connect.connect();
+        String sq="Select *From product";
+        pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+        rs=pst.executeQuery();
+        while(rs.next()){
+            c_product.addItem(rs.getString("name"));
+        }
+              rs.close();
+              pst.close();
+              con.close();
+        }catch(Exception ex){
+            
+        }
+    }
+        
+        
+     //Populate the combobox with data
+        public void customerComboBox(){
+        try{
+        con=database_connect.connect();
+        String sq="Select *From pro_customer";
+        pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+        rs=pst.executeQuery();
+        while(rs.next()){
+            c_customer.addItem(rs.getString("name"));
+        }
+              rs.close();
+              pst.close();
+              con.close();
+        }catch(Exception ex){
+            
+        }
+    }   
+    
+        
+      //For getting the product ID 
+    String getProductId(String product){
+       
+       try{
+            con=database_connect.connect();
+            String sq="SELECT * FROM `product` WHERE `Name`='"+product+"'";
+            pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+            
+            rs=pst.executeQuery();
+            if(rs.next()){
+            product= rs.getString("id");
+        
+            }
+           
+                  rs.close();
+                  pst.close();
+                  con.close();
+            }
+            catch(Exception ex){
+                
+            }
+       return product;
+    }
+    
+
+      //For getting the supplier ID 
+    String getCustomerId(String customer){
+       
+       try{
+            con=database_connect.connect();
+            String sq="SELECT * FROM `pro_customer` WHERE `Name`='"+customer+"'";
+            pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+            
+            rs=pst.executeQuery();
+            if(rs.next()){
+            customer= rs.getString("id");
+        
+            }
+           
+                  rs.close();
+                  pst.close();
+                  con.close();
+            }
+            catch(Exception ex){
+                
+            }
+       return customer;
+    }
+    
+    
+    
+        //getting the form data and validatig
+    private boolean getData(){
+        boolean check=true;
+        if(!c_id.getText().trim().equals("")){
+            id=c_id.getText();
+            check=true;
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Id field is empty");
+            check=false;
+        }
+        
+        if(!c_invoice.getText().trim().equals("")){
+            invoice=c_invoice.getText();
+            check=true;
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Name field is empty");
+            check=false;
+        }
+        
+        if(!c_qty.getText().trim().equals("")){
+            quantity=Integer.parseInt(c_qty.getText());
+           
+                check=true;
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Quantity is empty");
+            check=false;
+        }
+        
+        if(!c_unit.getText().trim().equals("")){
+            unit=Double.parseDouble(c_unit.getText());
+           
+                check=true;
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Unit field is empty");
+            check=false;
+        }
+        if(!c_total.getText().trim().equals("")){
+            total=Double.parseDouble(c_total.getText());
+           
+                check=true;
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Total field is empty");
+            check=false;
+        }
+        
+         if(c_product.getSelectedIndex()!=0){
+            products=c_product.getSelectedItem().toString();
+            productId=getProductId(products);
+          
+            check=true;     
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Please Select the product");
+            check=false;
+        }
+           if(c_customer.getSelectedIndex()!=0){
+            customers=c_customer.getSelectedItem().toString();
+            customerId=getCustomerId(customers);
+          
+            check=true;     
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Please Select the supplier");
+            check=false;
+        }
+        return check;
+    
+    }
+    
+    
+      
+    //clearing the textfield
+    public void clear(){
+   
+        c_invoice.setText("");
+        c_product.setSelectedIndex(0);
+        c_customer.setSelectedIndex(0);
+        c_qty.setText("");
+        c_unit.setText("");
+        c_total.setText("");
+        autoId();
+        invoiceId();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,28 +314,27 @@ int x,y;
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        c_unit = new javax.swing.JTextField();
+        c_id = new javax.swing.JTextField();
+        c_qty = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        itmTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
+        search = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        c_invoice = new javax.swing.JTextField();
+        c_product = new javax.swing.JComboBox<>();
+        c_customer = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        c_total = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -102,95 +380,123 @@ int x,y;
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 700, 20));
 
         jLabel2.setText("Id");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 20, 20));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 20, 20));
 
-        jLabel3.setText("Product");
+        jLabel3.setText("Invoice No.");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, 20));
 
-        jLabel4.setText("Customer");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, -1, 40));
+        jLabel4.setText("Product");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, -1, 20));
 
-        jLabel5.setText("Date");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, 40));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 300, 210, -1));
+        jLabel5.setText("Customer");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, -1, 20));
+        jPanel1.add(c_unit, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 190, -1));
 
-        jTextField2.setEditable(false);
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 90, 210, -1));
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, 210, -1));
-        jPanel1.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 210, -1));
+        c_id.setEditable(false);
+        jPanel1.add(c_id, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 190, -1));
+        jPanel1.add(c_qty, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 190, -1));
+
+        itmTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        itmTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                itmTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(itmTable);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 100, 370, 130));
 
         jButton1.setBackground(new java.awt.Color(51, 153, 255));
-        jButton1.setText("Clear");
+        jButton1.setText("Add");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 340, 120, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 360, 140, -1));
 
         jButton2.setBackground(new java.awt.Color(51, 153, 255));
-        jButton2.setText("Print");
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 120, -1));
+        jButton2.setText("Clear");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 360, 120, -1));
 
         jButton3.setBackground(new java.awt.Color(51, 153, 255));
-        jButton3.setText("Add More");
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 140, -1));
-
-        jLabel7.setText("Quantity");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 234, -1, 30));
-
-        jLabel8.setText("Unit Price");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 264, -1, 30));
-
-        jLabel9.setText("Total");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, 20));
-
-        jLabel6.setText("Invoice No.");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, -1, -1));
-        jPanel1.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 210, 210, -1));
-        jPanel1.add(jTextField8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, 210, -1));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 150, 210, -1));
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 180, 210, -1));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        jButton3.setText("Update");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        });
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, 140, -1));
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, 360, 100));
+        search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchActionPerformed(evt);
+            }
+        });
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchKeyReleased(evt);
+            }
+        });
+        jPanel1.add(search, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 70, 310, -1));
 
-        jScrollPane2.setEnabled(false);
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
-
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 210, 360, 180));
-        jPanel1.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 60, 300, -1));
-
-        jLabel10.setText("Search");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 60, -1, 20));
+        jLabel6.setText("Search");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 70, 20));
 
         jButton4.setBackground(new java.awt.Color(51, 153, 255));
-        jButton4.setText("Add ");
+        jButton4.setText("Delete");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 340, 140, -1));
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 390, 120, -1));
+
+        c_invoice.setEnabled(false);
+        jPanel1.add(c_invoice, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 150, 190, -1));
+
+        c_product.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select the product" }));
+        jPanel1.add(c_product, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, 190, -1));
+
+        c_customer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select the Customer" }));
+        jPanel1.add(c_customer, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 190, -1));
+
+        jLabel8.setText("Quantity");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+
+        jLabel9.setText("Unit");
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 270, -1, 20));
+        jPanel1.add(c_total, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 300, 190, -1));
+
+        jLabel10.setText("Total");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, -1));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
+        jTextArea1.setEnabled(false);
+        jScrollPane2.setViewportView(jTextArea1);
+
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 250, 370, 130));
+
+        jButton5.setBackground(new java.awt.Color(51, 153, 255));
+        jButton5.setText("Print");
+        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 390, 90, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -206,9 +512,60 @@ int x,y;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    //for adding a data
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+       int result;
+      
+        if(getData()){
+        
+           try{
+        
+       
+            con=database_connect.connect();
+            String sql="INSERT INTO `sale`(`id`, `customerId`, `productId`, `Date`, `Quantity`, `Unit Price`, `Total`, `InvoiceNumber`)VALUES (?,?,?,?,?,?,?,?)";
+            pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1,id);
+            pst.setString(2,customerId);
+            pst.setString(3,productId);
+            pst.setDate(4,date);
+            pst.setInt(5, quantity);
+            pst.setDouble(6, unit);
+            pst.setDouble(7, total);
+            pst.setString(8,invoice);
+            pst.executeUpdate();
+            
+            pst.close();
+            con.close();
+            
+            loadTable();
+            JOptionPane.showMessageDialog(rootPane, "Data Added Successfully");
+            } catch (SQLException ex) {
+           JOptionPane.showMessageDialog(rootPane,"Error adding Data");
+            }
+           
+             
+        }
+            
+             result = JOptionPane.showConfirmDialog(rootPane,"Add more item??", "Message box",
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.QUESTION_MESSAGE);
+             if(result==JOptionPane.YES_OPTION){
+                    c_product.setSelectedIndex(0);
+                    c_customer.setSelectedIndex(0);
+                    c_qty.setText("");
+                    c_unit.setText("");
+                    c_total.setText("");
+             }
+            
+            
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchActionPerformed
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
        this.dispose();
@@ -225,9 +582,117 @@ int x,y;
               this.setLocation(xx-x,yy-y);
     }//GEN-LAST:event_jPanel2MouseDragged
 
+    
+    
+    //for clearing the data
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       clear();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    
+    
+    //for getting the data from table
+    private void itmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itmTableMouseClicked
+            String item;
+            DefaultTableModel tModel=(DefaultTableModel) itmTable.getModel();
+            int selectRowIndex=itmTable.getSelectedRow();
+            item=(tModel.getValueAt(selectRowIndex,0).toString());
+            try{
+                con=database_connect.connect();
+                 String sq="Select * From sale where id='"+item+"'";
+                 pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sq);
+                 rs=pst.executeQuery();
+                 if(rs.next()){
+                     c_id.setText(rs.getString("id"));
+                     c_invoice.setText(rs.getString("invoicenumber"));
+                     c_qty.setText(String.valueOf(rs.getInt("Quantity")));
+                     c_unit.setText(String.valueOf(rs.getDouble("Unit Price")));
+                     c_total.setText(String.valueOf(rs.getDouble("Total")));
+                    rs.close();
+                    pst.close();
+                     con.close();
+                    
+                 }
+            }catch(Exception ex){
+                
+            }
+    }//GEN-LAST:event_itmTableMouseClicked
+
+    
+    //for updating the data
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if(getData()){
+       int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to Update?", "Alert!!",
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.QUESTION_MESSAGE);
+            if(result == JOptionPane.YES_OPTION){
+                 try{ 
+         
+                     con=database_connect.connect();
+                     String squpdate="UPDATE `sale` SET `customerId`=?,`productId`=?,`Quantity`=?,`Unit Price`=?,`Total`=? WHERE `id`='"+c_id.getText()+"'";
+                     pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(squpdate);
+                     pst.setString(1,customerId);
+                     pst.setString(2,productId);
+                     pst.setInt(3,quantity);
+                     pst.setDouble(4,unit);
+                     pst.setDouble(5,total);
+                     
+                     
+                     pst.execute();
+                     pst.close();
+                     con.close();
+                     clear();
+                     loadTable();
+                     }catch(Exception ex){
+                        JOptionPane.showMessageDialog(rootPane,ex);
+                     }
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    
+    //for deleting the data
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+       int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to delete?", "Alert!!",
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.QUESTION_MESSAGE);
+            if(result == JOptionPane.YES_OPTION){
+                try{
+                    con=database_connect.connect();
+                    String delsql="Delete From sale WHERE `id`='"+c_id.getText()+"'";
+                    pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(delsql);
+                    pst.execute();
+                    pst.close();
+                    con.close();
+                    clear();
+                    loadTable();
+              }catch(Exception ex){
+                   JOptionPane.showMessageDialog(rootPane,"Unable to perform the action");
+               }
+            }
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+       String searchItem=search.getText();
+       
+        try{
+            con=database_connect.connect();
+           
+            String sq="Select * From purchase where Invoice Number LIKE'%"+searchItem+"%' ";
+             
+            pst=(PreparedStatement) con.prepareStatement(sq);
+            
+             
+            rs=pst.executeQuery();
+            itmTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
+             
+            rs.close();
+            pst.close();
+            con.close();
+        }catch(Exception ex){
+            
+        }
+    }//GEN-LAST:event_searchKeyReleased
 
     /**
      * @param args the command line arguments
@@ -256,6 +721,8 @@ int x,y;
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -266,12 +733,19 @@ int x,y;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> c_customer;
+    private javax.swing.JTextField c_id;
+    private javax.swing.JTextField c_invoice;
+    private javax.swing.JComboBox<String> c_product;
+    private javax.swing.JTextField c_qty;
+    private javax.swing.JTextField c_total;
+    private javax.swing.JTextField c_unit;
+    private javax.swing.JTable itmTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -279,7 +753,6 @@ int x,y;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -287,14 +760,7 @@ int x,y;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField search;
     // End of variables declaration//GEN-END:variables
 }

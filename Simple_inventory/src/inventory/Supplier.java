@@ -335,7 +335,7 @@ public class Supplier extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    //For adding the customer
+    //For adding the Supplier
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(getData()){
             try {
@@ -392,6 +392,8 @@ public class Supplier extends javax.swing.JFrame {
        clear();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    
+    //For Updating the data
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if(getData()){
        int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to Update?", "Alert!!",
@@ -418,6 +420,8 @@ public class Supplier extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    
+    //for deleting the data
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
        int result = JOptionPane.showConfirmDialog(rootPane,"Sure? You want to delete?", "Alert!!",
                JOptionPane.YES_NO_OPTION,
@@ -439,6 +443,8 @@ public class Supplier extends javax.swing.JFrame {
                 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    
+    //for getting the table item on mouse click
     private void itmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itmTableMouseClicked
        String item;
             DefaultTableModel tModel=(DefaultTableModel) itmTable.getModel();
