@@ -6,10 +6,14 @@
 package inventory;
 
 import com.mysql.jdbc.Connection;
+import java.awt.print.PrinterException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -19,9 +23,11 @@ import javax.swing.table.DefaultTableModel;
  * @author Bimal Kafle
  */
 public class Sales extends javax.swing.JFrame {
- int x,y;
+ int x,y,index=0;
+ ArrayList<String> data=new ArrayList<String>();
  PreparedStatement pst=null;
  ResultSet rs=null;
+ Double sum=0.0;
  Connection con;
  String id,productId,customerId,invoice,products,customers;
  int quantity;
@@ -41,8 +47,21 @@ public class Sales extends javax.swing.JFrame {
         
     }
 
+    public void billHeader(String invoice,String customer){
+     txtBill.setText("Sale Invoice"+"\n"+"\t\t\t"+invoice+"\n"+"\t\t\t"+date+"\n"+"To:"+customer+"\n"+"==============================================="+"\n"+"Description \t Unit \t Quantity \t Total"+"\n"+"===============================================");
+    }
     
+    public void makeBill(){
+        for(int i=0;i<data.size();i++){
+            txtBill.setText(txtBill.getText()+"\n"+data.get(i));
+        }
+    }
     
+    public void billFooter(Double total){
+        Double vat=0.13*total;
+        Double gTotal=total+vat;
+        txtBill.setText(txtBill.getText()+"\n"+"==============================================="+"\n\t\t\t"+" Sub Total:"+total+"\n\t\t\t13% Vat:"+vat+"\n\t\t\t Total Due:"+gTotal+"\n\t Thankyou For Your Business!!");
+    }
       //loading the data in a table
     public void loadTable(){
         try{
@@ -210,74 +229,82 @@ public class Sales extends javax.swing.JFrame {
     
         //getting the form data and validatig
     private boolean getData(){
-        boolean check=true;
+        boolean check=false;
+        boolean check1,check2,check3,check4,check5,check6,check7;
+        int count=0;
         if(!c_id.getText().trim().equals("")){
             id=c_id.getText();
-            check=true;
+            check1=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Id field is empty");
-            check=false;
+            check1=false;
         }
         
         if(!c_invoice.getText().trim().equals("")){
             invoice=c_invoice.getText();
-            check=true;
+            check2=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Name field is empty");
-            check=false;
+            check2=false;
         }
         
         if(!c_qty.getText().trim().equals("")){
             quantity=Integer.parseInt(c_qty.getText());
            
-                check=true;
+                check3=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Quantity is empty");
-            check=false;
+            check3=false;
         }
         
         if(!c_unit.getText().trim().equals("")){
             unit=Double.parseDouble(c_unit.getText());
            
-                check=true;
+                check4=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Unit field is empty");
-            check=false;
+            check4=false;
         }
         if(!c_total.getText().trim().equals("")){
             total=Double.parseDouble(c_total.getText());
            
-                check=true;
+                check5=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Total field is empty");
-            check=false;
+            check5=false;
         }
         
          if(c_product.getSelectedIndex()!=0){
             products=c_product.getSelectedItem().toString();
             productId=getProductId(products);
           
-            check=true;     
+            check6=true;     
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Please Select the product");
-            check=false;
+            check6=false;
         }
            if(c_customer.getSelectedIndex()!=0){
             customers=c_customer.getSelectedItem().toString();
             customerId=getCustomerId(customers);
           
-            check=true;     
+            check7=true;     
         }
         else{
-            JOptionPane.showMessageDialog(rootPane, "Please Select the supplier");
-            check=false;
+            JOptionPane.showMessageDialog(rootPane, "Please Select the Customer");
+            check7=false;
         }
+        
+           if(check1&&check2&&check3&&check4&&check5&&check6&&check7){
+               check=true;
+           }else{
+               check=false;
+           }
         return check;
     
     }
@@ -286,7 +313,7 @@ public class Sales extends javax.swing.JFrame {
       
     //clearing the textfield
     public void clear(){
-   
+        txtBill.setText("");
         c_invoice.setText("");
         c_product.setSelectedIndex(0);
         c_customer.setSelectedIndex(0);
@@ -333,7 +360,7 @@ public class Sales extends javax.swing.JFrame {
         c_total = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtBill = new javax.swing.JTextArea();
         jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -486,16 +513,21 @@ public class Sales extends javax.swing.JFrame {
         jLabel10.setText("Total");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, -1));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
-        jTextArea1.setEnabled(false);
-        jScrollPane2.setViewportView(jTextArea1);
+        txtBill.setColumns(20);
+        txtBill.setRows(5);
+        txtBill.setBorder(javax.swing.BorderFactory.createCompoundBorder());
+        txtBill.setEnabled(false);
+        jScrollPane2.setViewportView(txtBill);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 250, 370, 130));
 
         jButton5.setBackground(new java.awt.Color(51, 153, 255));
         jButton5.setText("Print");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 390, 90, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -537,27 +569,38 @@ public class Sales extends javax.swing.JFrame {
             
             pst.close();
             con.close();
-            
+            data.add(index,products+"\t"+c_qty.getText()+"\t"+c_unit.getText()+"\t"+c_total.getText()+"\n");
+            sum=sum+total;
+           
             loadTable();
             JOptionPane.showMessageDialog(rootPane, "Data Added Successfully");
             } catch (SQLException ex) {
            JOptionPane.showMessageDialog(rootPane,"Error adding Data");
             }
            
-             
-        }
-            
-             result = JOptionPane.showConfirmDialog(rootPane,"Add more item??", "Message box",
+               result = JOptionPane.showConfirmDialog(rootPane,"Add more item??", "Message box",
                JOptionPane.YES_NO_OPTION,
                JOptionPane.QUESTION_MESSAGE);
              if(result==JOptionPane.YES_OPTION){
-                    c_product.setSelectedIndex(0);
-                    c_customer.setSelectedIndex(0);
+                    index++;
+                    
+                  
+                    c_id.setText("");
+                    autoId();
                     c_qty.setText("");
                     c_unit.setText("");
                     c_total.setText("");
+             }else{
+                 billHeader(invoice, customers);
+                 makeBill();
+                 billFooter(sum);
+                 index=0;
+                 sum=0.0;
              }
             
+        }
+            
+         
             
         
         
@@ -678,7 +721,7 @@ public class Sales extends javax.swing.JFrame {
         try{
             con=database_connect.connect();
            
-            String sq="Select * From purchase where Invoice Number LIKE'%"+searchItem+"%' ";
+            String sq="Select * From sale where InvoiceNumber LIKE'%"+searchItem+"%' ";
              
             pst=(PreparedStatement) con.prepareStatement(sq);
             
@@ -693,6 +736,14 @@ public class Sales extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_searchKeyReleased
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+     try {
+         txtBill.print();
+     } catch (PrinterException ex) {
+         Logger.getLogger(Sales.class.getName()).log(Level.SEVERE, null, ex);
+     }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -760,7 +811,7 @@ public class Sales extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField search;
+    private javax.swing.JTextArea txtBill;
     // End of variables declaration//GEN-END:variables
 }

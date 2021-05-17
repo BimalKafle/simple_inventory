@@ -95,25 +95,30 @@ public class ProductCategory extends javax.swing.JFrame {
     
        //getting the form data and validatig
     private boolean getData(){
-        boolean check=true;
+        boolean check=false;
+         boolean check1,check2;
         if(!c_id.getText().trim().equals("")){
             id=c_id.getText();
-            check=true;
+            check1=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Id field is empty");
-            check=false;
+            check1=false;
         }
         
         if(!c_name.getText().trim().equals("")){
             name=c_name.getText();
-            check=true;
+            check2=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Name field is empty");
-            check=false;
+            check2=false;
         }
-         
+          if(check1&&check2){
+               check=true;
+           }else{
+               check=false;
+           }
         return check;
     
     }

@@ -179,74 +179,80 @@ public class Purchase extends javax.swing.JFrame {
     
         //getting the form data and validatig
     private boolean getData(){
-        boolean check=true;
+        boolean check=false;
+        boolean check1,check2,check3,check4,check5,check6,check7;
         if(!c_id.getText().trim().equals("")){
             id=c_id.getText();
-            check=true;
+            check1=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Id field is empty");
-            check=false;
+            check1=false;
         }
         
         if(!c_invoice.getText().trim().equals("")){
             invoice=c_invoice.getText();
-            check=true;
+            check2=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Name field is empty");
-            check=false;
+            check2=false;
         }
         
         if(!c_qty.getText().trim().equals("")){
             quantity=Integer.parseInt(c_qty.getText());
            
-                check=true;
+                check3=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Quantity is empty");
-            check=false;
+            check3=false;
         }
         
         if(!c_unit.getText().trim().equals("")){
             unit=Double.parseDouble(c_unit.getText());
            
-                check=true;
+                check4=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Unit field is empty");
-            check=false;
+            check4=false;
         }
         if(!c_total.getText().trim().equals("")){
             total=Double.parseDouble(c_total.getText());
            
-                check=true;
+                check5=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Total field is empty");
-            check=false;
+            check5=false;
         }
         
          if(c_product.getSelectedIndex()!=0){
             products=c_product.getSelectedItem().toString();
             productId=getProductId(products);
           
-            check=true;     
+            check6=true;     
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Please Select the product");
-            check=false;
+            check6=false;
         }
            if(c_supplier.getSelectedIndex()!=0){
             suppliers=c_supplier.getSelectedItem().toString();
             supplierId=getSupplierId(suppliers);
           
-            check=true;     
+            check7=true;     
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Please Select the supplier");
-            check=false;
+            check7=false;
         }
+            if(check1&&check2&&check3&&check4&&check5&&check6&&check7){
+               check=true;
+           }else{
+               check=false;
+           }
         return check;
     
     }
@@ -472,7 +478,7 @@ public class Purchase extends javax.swing.JFrame {
         
        
             con=database_connect.connect();
-            String sql="INSERT INTO `purchase`(`id`, `productId`, `supplierId`, `Date`, `Quantity`, `Unit Price`, `Total`, `Invoice Number`)VALUES (?,?,?,?,?,?,?,?)";
+            String sql="INSERT INTO `purchase`(`id`, `productId`, `supplierId`, `Date`, `Quantity`, `Unit Price`, `Total`, `InvoiceNumber`)VALUES (?,?,?,?,?,?,?,?)";
             pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(sql);
             pst.setString(1,id);
             pst.setString(2,productId);
@@ -542,7 +548,7 @@ public class Purchase extends javax.swing.JFrame {
                  rs=pst.executeQuery();
                  if(rs.next()){
                      c_id.setText(rs.getString("id"));
-                     c_invoice.setText(rs.getString("invoice number"));
+                     c_invoice.setText(rs.getString("invoicenumber"));
                      c_qty.setText(String.valueOf(rs.getInt("Quantity")));
                      c_unit.setText(String.valueOf(rs.getDouble("Unit Price")));
                      c_total.setText(String.valueOf(rs.getDouble("Total")));
@@ -567,7 +573,7 @@ public class Purchase extends javax.swing.JFrame {
                  try{ 
          
                      con=database_connect.connect();
-                     String squpdate="UPDATE `purchase` SET `productId`=?,`supplierId`=?,`Quantity`=?,`Unit Price`=?,`Total`=?,`Invoice Number`=? WHERE `id`='"+c_id.getText()+"'";
+                     String squpdate="UPDATE `purchase` SET `productId`=?,`supplierId`=?,`Quantity`=?,`Unit Price`=?,`Total`=?,`InvoiceNumber`=? WHERE `id`='"+c_id.getText()+"'";
                      pst=(com.mysql.jdbc.PreparedStatement) con.prepareStatement(squpdate);
                      pst.setString(1,productId);
                      pst.setString(2,supplierId);
@@ -616,7 +622,7 @@ public class Purchase extends javax.swing.JFrame {
         try{
             con=database_connect.connect();
            
-            String sq="Select * From purchase where Invoice Number LIKE'%"+searchItem+"%' ";
+            String sq="Select * From purchase where InvoiceNumber LIKE'%"+searchItem+"%' ";
              
             pst=(PreparedStatement) con.prepareStatement(sq);
             

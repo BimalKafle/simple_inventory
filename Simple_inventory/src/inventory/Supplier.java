@@ -44,56 +44,61 @@ public class Supplier extends javax.swing.JFrame {
     
     //getting the form data and validatig
     private boolean getData(){
-        boolean check=true;
+        boolean check=false;
+          boolean check1,check2,check3,check4;
         if(!c_Id.getText().trim().equals("")){
             id=c_Id.getText();
-            check=true;
+            check1=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Id field is empty");
-            check=false;
+            check1=false;
         }
         
         if(!c_name.getText().trim().equals("")){
             name=c_name.getText();
-            check=true;
+            check2=true;
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Name field is empty");
-            check=false;
+            check2=false;
         }
         
         if(!c_email.getText().trim().equals("")){
             email=c_email.getText();
             if(isValid(email)){
-                check=true;
+                check3=true;
             }
             else{
                 JOptionPane.showMessageDialog(rootPane, "Invalid Email");
-                check=false;
+                check3=false;
             }
             
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Email field is empty");
-            check=false;
+            check3=false;
         }
         
          if(!c_phone.getText().trim().equals("")){
             phone=c_phone.getText();
             if(phone.length()==10){
-                check=true;
+                check4=true;
             }
             else{
                 JOptionPane.showMessageDialog(rootPane, "Invalid Phone");
-                check=false;
+                check4=false;
             }
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Phone field is empty");
-            check=false;
+            check4=false;
         }
-         
+         if(check1&&check2&&check3&&check4){
+               check=true;
+           }else{
+               check=false;
+           }
         return check;
     
     }
